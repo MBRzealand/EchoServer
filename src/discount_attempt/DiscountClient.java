@@ -24,13 +24,17 @@ public class DiscountClient {
         DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
         Scanner messageInput = new Scanner(System.in);
 
-        String message = messageInput.nextLine();
+        while(true) {
 
-        outputStream.writeUTF(message);
-        outputStream.flush();
 
-        outputStream.close();
-        messageInput.close();
+            String message = messageInput.nextLine();
+
+            outputStream.writeUTF(message);
+            outputStream.flush();
+
+//            outputStream.close();
+//            messageInput.close();
+        }
 
     }
 

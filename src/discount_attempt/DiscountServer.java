@@ -3,10 +3,16 @@ package discount_attempt;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DiscountServer {
+
+    Set<String> listOfCurrentUsers = new HashSet<>();
+    Set<PrintWriter> writers = new HashSet<>();
 
     static NetworkDetails details = new NetworkDetails();
     static ServerSocket serverSocket;
@@ -14,7 +20,7 @@ public class DiscountServer {
     static DataInputStream inputStream = null;
     static DataOutputStream outputStream = null;
 
-    static void startServer() throws IOException {
+    static void startServer()  throws IOException {
 
         System.out.println("Starting server...");
 
@@ -22,9 +28,20 @@ public class DiscountServer {
 
         System.out.println("Now accepting connections on port " + details.getPORT() + ".");
 
-        socket = serverSocket.accept();
 
-        System.out.println("Connection established with " + socket.getRemoteSocketAddress().toString());
+        new Thread(() -> {
+
+            while (true) {
+
+                try {
+                    socket = serverSocket.accept();
+                    System.out.println("Connection established with " + socket.getRemoteSocketAddress().toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }).start();
 
     }
 
@@ -32,31 +49,40 @@ public class DiscountServer {
 
     }
 
-    static void updateServer() throws IOException {
 
-        while (true) {
-
-            if(!socket.isClosed()){
-
-            try {
-                inputStream = new DataInputStream(socket.getInputStream());
-                outputStream = new DataOutputStream(socket.getOutputStream());
-                String incomingText = inputStream.readUTF(); // Jeg læser en string på port 1978
-                System.out.println("Tekst modtaget: " + incomingText);
-            } catch (Exception e){
-                e.printStackTrace();
-            } finally {
-                inputStream.close();
-                outputStream.close();
-            }
-
-            } else {
-                socket = serverSocket.accept();
-            }
+    static void requestUsername() throws IOException {
+        if(socket.isConnected()){
+            outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("Please enter a Username:");
+            outputStream.flush();
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    static void updateServer() throws IOException {
+
+        new Thread(() -> {
+
+            while (true) {
+
+                try {
+                    inputStream = new DataInputStream(socket.getInputStream());
+                    outputStream = new DataOutputStream(socket.getOutputStream());
+                    String incomingText = inputStream.readUTF(); // Jeg læser en string på port 1978
+                    System.out.println("Tekst modtaget: " + incomingText);
+                } catch (Exception ignored) {
+                }
+//                } finally {
+//                    inputStream.close();
+//                    outputStream.close();
+//                }
+
+            }
+
+        }).start();
+
+    }
+
+    public static void main(String[] args)  throws IOException {
         startServer();
         updateServer();
     }

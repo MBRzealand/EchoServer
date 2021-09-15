@@ -36,6 +36,7 @@ public class DiscountServer {
                 try {
                     socket = serverSocket.accept();
                     System.out.println("Connection established with " + socket.getRemoteSocketAddress().toString());
+                    requestUsername();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

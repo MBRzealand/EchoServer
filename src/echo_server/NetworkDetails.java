@@ -1,4 +1,4 @@
-package copy_paste;
+package echo_server;
 
 public class NetworkDetails {
 

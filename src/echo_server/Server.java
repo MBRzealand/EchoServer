@@ -1,14 +1,18 @@
-package copy_paste;
+package echo_server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Server {
 
     static Socket socket =null;
     static ServerSocket serverSocket =null;
     static NetworkDetails networkDetails = new NetworkDetails();
+    static ArrayList<ConnectionThread> listOfConnections = new ArrayList<>();
+
+//    static Map<String, Socket> map = new HashMap<String, Socket>();
 
     public static void main(String[] args){
 
@@ -28,8 +32,13 @@ public class Server {
             try{
                 socket = serverSocket.accept();
                 System.out.println("Connection established with " + socket.getRemoteSocketAddress().toString());
-                ClientThread clientThread = new ClientThread(socket);
-                clientThread.start();
+//                map.put("someKey", socket);
+                ConnectionThread connectionThread = new ConnectionThread(socket);
+                listOfConnections.add(connectionThread);
+
+                System.out.println(listOfConnections.toString());
+
+                connectionThread.start();
 
             } catch(Exception e) {
                 e.printStackTrace();

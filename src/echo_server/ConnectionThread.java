@@ -1,4 +1,4 @@
-package copy_paste;
+package echo_server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,14 +6,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class ClientThread extends Thread{
+public class ConnectionThread extends Thread{
 
     String line = null;
     BufferedReader inputStream = null;
     PrintWriter outputStream = null;
     Socket socket = null;
 
-    public ClientThread(Socket s){
+    public ConnectionThread(Socket s){
         this.socket = s;
     }
 
